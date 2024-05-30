@@ -19,7 +19,6 @@ import ScholarshipList from '../screens/scholarship';
 import PersonalData from '../screens/scholarship/apply';
 import FormComponent from '../screens/scholarship/secondStepForm';
 import FamilyExpenditures from '../screens/scholarship/thirdForm';
-import ScholarshipDetails from '../screens/scholarship/fourthForm';
 import UtilitiesAndExpenditures from '../screens/scholarship/fifthForm';
 import CongratulationScreen from '../screens/scholarship/success';
 import auth from '@react-native-firebase/auth';
@@ -38,6 +37,8 @@ import Header from '../components/AppBar';
 import PrivacyPolicyScreen from '../screens/privacyPolicy';
 import AboutUsScreen from '../screens/aboutUs';
 import ComplaintScreen from '../screens/customerSupport/complaintForm';
+import FourthForm from '../screens/scholarship/fourthForm';
+import ScholarshipDetail from '../screens/scholarship/ScholarShipDetails';
 
 const stack = createNativeStackNavigator();
 const StatusBarWrapper = ({ children }) => {
@@ -87,6 +88,13 @@ export default function NavigationScreen() {
                   headerShown: false,
                 }}
               />
+               <stack.Screen
+                name="Details"
+                component={ScholarshipDetail}
+                options={{
+                  headerShown: false,
+                }}
+              />
               <stack.Screen
                 name="profile"
                 component={ProfileScreen}
@@ -131,7 +139,7 @@ export default function NavigationScreen() {
               />
               <stack.Screen
                 name="fourthForm"
-                component={ScholarshipDetails}
+                component={FourthForm}
                 options={{
                   headerShown: false,
                 }}
@@ -146,6 +154,13 @@ export default function NavigationScreen() {
               <stack.Screen
                 name="Complaint"
                 component={NoComplaintFoundScreen}
+              // options={{
+              //   headerShown: false,
+              // }}
+              />
+                <stack.Screen
+                name="Scholarships"
+                component={ScholarshipList}
               // options={{
               //   headerShown: false,
               // }}

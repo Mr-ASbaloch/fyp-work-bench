@@ -52,7 +52,7 @@ const Dashboard = ({ navigation }) => {
             }}>
             <DashboardCard imageSource={require('../../assets/icons/menu.png')}
               subTitle=" Scholarship list"
-              onPress={() => navigation.navigate('applyForm')}
+              onPress={() => navigation.navigate('scholarship')}
             />
             <DashboardCard imageSource={require('../../assets/icons/search.png')}
               subTitle=" Search Scholarships"

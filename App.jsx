@@ -4,10 +4,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Orientation from 'react-native-orientation-locker';
 import { Provider } from 'react-redux';
 import { store } from './src/store/store';
-
 import NavigationScreen from './src/navigation/navigationScreen';
-import Setting from './src/screens/settings';
-import Register from './src/screens/authScreens/RegisterScreen';
 
 const Loader = () => (
   <View style={styles.loader}>
@@ -40,8 +37,6 @@ const App = () => {
       ) : (
         <>
           <NavigationScreen />
-          {/* <Setting/> */}
-          {/* <Register/> */}
         </>
       )}
     </Provider>

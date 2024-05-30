@@ -1,17 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Button from '../../components/Button';
 
-const ScholarshipComponent = ({ name, description, postedDate, deadline, handleMore }) => {
+const ScholarshipComponent = ({handleMore, data}) => {
   return (
-    
     <View style={styles.scholarshipContainer}>
-      <Text style={styles.scholarshipName}>{name}</Text>
-      <Text style={styles.description}>{description}</Text>
-      <Text style={styles.dateText}>Posted Date: {postedDate}</Text>
-      <Text style={styles.deadlineText}>Deadline: {deadline}</Text>
-      <Button text={'Read More'} onPress={handleMore}  />
-     
+      <Text style={styles.scholarshipName}>{data?.name}</Text>
+      <Text style={styles.description}>{data?.description}</Text>
+      <Text style={styles.dateText}>Posted Date: {data?.postedDate}</Text>
+      <Text style={styles.deadlineText}>Posted By: {data?.postedBy}</Text>
+      <Text style={styles.deadlineText}>Deadline: {data?.deadline}</Text>
+      <Text style={styles.deadlineText}>Amount: {data?.amount}</Text>
+      <Button text={'Read More'} onPress={handleMore} />
     </View>
   );
 };
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,

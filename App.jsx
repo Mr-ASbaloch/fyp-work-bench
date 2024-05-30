@@ -1,10 +1,12 @@
-import { Platform, View, ActivityIndicator, StyleSheet } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {Platform, View, ActivityIndicator, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import Orientation from 'react-native-orientation-locker';
-import { Provider } from 'react-redux';
-import { store } from './src/store/store';
+import {Provider} from 'react-redux';
+import {store} from './src/store/store';
 import NavigationScreen from './src/navigation/navigationScreen';
+import {initializeAuth} from './src/store/slices/authSlice';
+import {useDispatch} from 'react-redux';
 
 const Loader = () => (
   <View style={styles.loader}>
@@ -12,7 +14,8 @@ const Loader = () => (
   </View>
 );
 
-const App = () => {
+const AppContent = () => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,18 +33,18 @@ const App = () => {
     };
   }, []);
 
-  return (
-    <Provider store={store}>
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <NavigationScreen />
-        </>
-      )}
-    </Provider>
-  );
+  useEffect(() => {
+    dispatch(initializeAuth());
+  }, [dispatch]);
+
+  return loading ? <Loader /> : <NavigationScreen />;
 };
+
+const App = () => (
+  <Provider store={store}>
+    <AppContent />
+  </Provider>
+);
 
 const styles = StyleSheet.create({
   loader: {

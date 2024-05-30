@@ -31,7 +31,7 @@ const ImageCarousel = ({ images }) => {
 const styles = StyleSheet.create({
     imageContainer: {
         width: screenWidth * 0.8,
-        height: screenWidth * 0.8,
+        height: screenWidth * 0.6,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 20,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '95%',
-        height: '80%',
+        height: '90%',
         resizeMode: 'cover',
         borderRadius: 10,
         overflow: 'hidden',

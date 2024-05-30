@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, Text, StyleSheet, ScrollView } from 
 import { colors } from '../../utils/styles';
 import { commonStyle } from './commonStyle';
 
-const ScholarshipDetails = ({navigation}) => {
+const FourthForm = ({navigation}) => {
     const [tuitionCharges, setTuitionCharges] = useState('');
     const [gotScholarships, setGotScholarships] = useState('');
     const [scholarships, setScholarships] = useState([
@@ -179,4 +179,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ScholarshipDetails;
+export default FourthForm;

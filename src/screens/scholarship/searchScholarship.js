@@ -1,140 +1,108 @@
-// SearchScholarship.js
-
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
+import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import CustomRadioButton from './CustomRadioButton'; // Adjust the import path as needed
+import { FontAwesome } from 'react-native-vector-icons';
 
-const SearchScholarship = ({ onSearch }) => {
-  const [keyword, setKeyword] = useState('');
-  const [educationLevel, setEducationLevel] = useState('');
-  const [fieldOfStudy, setFieldOfStudy] = useState('');
-  const [location, setLocation] = useState('');
-  const [scholarshipType, setScholarshipType] = useState('');
+const ScholarshipSearch = () => {
+  // State variables
+  const [department, setDepartment] = useState('');
+  const [degreeLevel, setDegreeLevel] = useState('');
+  const [gpa, setGpa] = useState('');
+  const [country, setCountry] = useState('');
+
+  // Sample data for radio buttons
+  const departments = ['Engineering', 'Business', 'Arts', 'Science'];
+  const degreeLevels = ['Undergraduate', 'Masters', 'PhD'];
+  const countries = ['United States', 'Canada', 'United Kingdom', 'Australia'];
 
   const handleSearch = () => {
-    const filters = {
-      keyword,
-      educationLevel,
-      fieldOfStudy,
-      location,
-      scholarshipType,
-    };
-    onSearch(filters);
+    if (department && degreeLevel && gpa && country) {
+      // Implement search logic here
+      Alert.alert('Search Initiated', `Searching for ${degreeLevel} scholarships in ${department} for GPA ${gpa} in ${country}`);
+    } else {
+      Alert.alert('Error', 'Please fill in all fields');
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Search Scholarships</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.label}>Department</Text>
+      {departments.map((dept) => (
+        <CustomRadioButton
+          key={dept}
+          label={dept}
+          selected={department === dept}
+          onPress={() => setDepartment(dept)}
+        />
+      ))}
+
+      <Text style={styles.label}>Degree Level</Text>
+      {degreeLevels.map((level) => (
+        <CustomRadioButton
+          key={level}
+          label={level}
+          selected={degreeLevel === level}
+          onPress={() => setDegreeLevel(level)}
+        />
+      ))}
+
+      <Text style={styles.label}>GPA</Text>
       <TextInput
         style={styles.input}
-        placeholder="Keyword"
-        value={keyword}
-        onChangeText={setKeyword}
+        keyboardType="decimal-pad"
+        placeholder="Enter GPA"
+        value={gpa}
+        onChangeText={(text) => setGpa(text)}
       />
-      <RNPickerSelect
-        onValueChange={(value) => setEducationLevel(value)}
-        items={[
-          { label: 'Select Education Level', value: '' },
-          { label: 'High School', value: 'high_school' },
-          { label: 'Undergraduate', value: 'undergraduate' },
-          { label: 'Graduate', value: 'graduate' },
-          { label: 'PhD', value: 'phd' },
-        ]}
-        placeholder={{}}
-        style={pickerSelectStyles}
-        value={educationLevel}
-      />
-      <RNPickerSelect
-        onValueChange={(value) => setFieldOfStudy(value)}
-        items={[
-          { label: 'Select Field of Study', value: '' },
-          { label: 'Science', value: 'science' },
-          { label: 'Engineering', value: 'engineering' },
-          { label: 'Arts', value: 'arts' },
-          { label: 'Business', value: 'business' },
-          { label: 'Law', value: 'law' },
-        ]}
-        placeholder={{}}
-        style={pickerSelectStyles}
-        value={fieldOfStudy}
-      />
-      <RNPickerSelect
-        onValueChange={(value) => setLocation(value)}
-        items={[
-          { label: 'Select Location', value: '' },
-          { label: 'United States', value: 'us' },
-          { label: 'Canada', value: 'canada' },
-          { label: 'United Kingdom', value: 'uk' },
-          { label: 'Australia', value: 'australia' },
-          { label: 'Europe', value: 'europe' },
-        ]}
-        placeholder={{}}
-        style={pickerSelectStyles}
-        value={location}
-      />
-      <RNPickerSelect
-        onValueChange={(value) => setScholarshipType(value)}
-        items={[
-          { label: 'Select Scholarship Type', value: '' },
-          { label: 'Merit-based', value: 'merit' },
-          { label: 'Need-based', value: 'need' },
-          { label: 'Athletic', value: 'athletic' },
-          { label: 'Minority', value: 'minority' },
-          { label: 'International', value: 'international' },
-        ]}
-        placeholder={{}}
-        style={pickerSelectStyles}
-        value={scholarshipType}
-      />
+
+      <Text style={styles.label}>Country of Study</Text>
+      {countries.map((countryOption) => (
+        <TouchableOpacity
+          key={countryOption}
+          style={styles.checkboxContainer}
+          onPress={() => setCountry(countryOption)}
+        >
+          <FontAwesome
+            name={country === countryOption ? 'check-square' : 'square-o'}
+            size={24}
+            color="#444"
+          />
+          <Text style={styles.checkboxLabel}>{countryOption}</Text>
+        </TouchableOpacity>
+      ))}
+
       <Button title="Search" onPress={handleSearch} />
-    </View>
+    </ScrollView>
   );
 };
 
-export default SearchScholarship;
-
+// Styling for the component
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#f8f9fa',
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+  label: {
+    fontSize: 16,
+    marginVertical: 10,
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
     borderWidth: 1,
+    borderColor: '#444',
     borderRadius: 5,
+    padding: 10,
+    fontSize: 16,
     marginBottom: 20,
-    paddingHorizontal: 10,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  checkboxLabel: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#444',
   },
 });
 
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-    marginBottom: 20,
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-    marginBottom: 20,
-  },
-});
+export default ScholarshipSearch;

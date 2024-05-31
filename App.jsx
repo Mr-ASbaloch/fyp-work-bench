@@ -4,7 +4,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Orientation from 'react-native-orientation-locker';
 import { Provider } from 'react-redux';
 import { store } from './src/store/store';
-import NavigationScreen from './src/navigation/navigationScreen';
+
 
 const Loader = () => (
   <View style={styles.loader}>
@@ -29,7 +29,6 @@ const App = () => {
       Orientation.unlockAllOrientations();
     };
   }, []);
-
   return (
     <Provider store={store}>
       {loading ? (
@@ -53,3 +52,4 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+

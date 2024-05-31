@@ -1,21 +1,63 @@
 // ScholarshipList.js
 
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import React from 'react';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import React, {useEffect} from 'react';
 import ScholarshipComponent from './ScholarshipCard';
-import { useNavigation } from '@react-navigation/native';
-import { colors } from '../../utils/styles';
+import {useNavigation} from '@react-navigation/native';
+import {colors} from '../../utils/styles';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchScholarships} from '../../store/slices/scholarshipSlice';
 
 const ScholarshipList = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const scholarships = useSelector(state => state.scholarships.items);
 
-  const scholarships = [
-    { id: 1, name: "Example Scholarship 1", description: "Description for scholarship 1", postedDate: "April 25, 2024", deadline: "May 15, 2024" },
-    { id: 2, name: "Example Scholarship 2", description: "Description for scholarship 2", postedDate: "April 26, 2024", deadline: "May 16, 2024" },
-    { id: 3, name: "Example Scholarship 3", description: "Description for scholarship 3", postedDate: "April 27, 2024", deadline: "May 17, 2024" },
-    { id: 4, name: "Example Scholarship 4", description: "Description for scholarship 4", postedDate: "April 28, 2024", deadline: "May 18, 2024" },
-    { id: 5, name: "Example Scholarship 5", description: "Description for scholarship 5", postedDate: "April 29, 2024", deadline: "May 19, 2024" },
-  ];
+  useEffect(() => {
+    dispatch(fetchScholarships());
+    console.log(
+      '++++++++++++++++++++++Scholarships fetched successfully++++++++++++',
+    );
+    console.log(scholarships);
+  }, []);
+
+  // const scholarships = [
+  //   {
+  //     id: 1,
+  //     name: 'Example Scholarship 1',
+  //     description: 'Description for scholarship 1',
+  //     postedDate: 'April 25, 2024',
+  //     deadline: 'May 15, 2024',
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Example Scholarship 2',
+  //     description: 'Description for scholarship 2',
+  //     postedDate: 'April 26, 2024',
+  //     deadline: 'May 16, 2024',
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Example Scholarship 3',
+  //     description: 'Description for scholarship 3',
+  //     postedDate: 'April 27, 2024',
+  //     deadline: 'May 17, 2024',
+  //   },
+  //   {
+  //     id: 4,
+  //     name: 'Example Scholarship 4',
+  //     description: 'Description for scholarship 4',
+  //     postedDate: 'April 28, 2024',
+  //     deadline: 'May 18, 2024',
+  //   },
+  //   {
+  //     id: 5,
+  //     name: 'Example Scholarship 5',
+  //     description: 'Description for scholarship 5',
+  //     postedDate: 'April 29, 2024',
+  //     deadline: 'May 19, 2024',
+  //   },
+  // ];
 
   return (
     <View style={styles.container}>
@@ -25,12 +67,11 @@ const ScholarshipList = () => {
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {scholarships.map(scholarship => (
           <ScholarshipComponent
-            key={scholarship.id}
-            name={scholarship.name}
-            description={scholarship.description}
-            postedDate={scholarship.postedDate}
-            deadline={scholarship.deadline}
-            handleMore={() => { navigation.navigate('Details') }}
+            key={scholarship?.id}
+            data={scholarship}
+            handleMore={() => {
+              navigation.navigate('Details', {scholarship});
+            }}
           />
         ))}
       </ScrollView>
@@ -53,7 +94,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5, // for Android shadow
@@ -64,7 +105,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: colors.blue,
-
   },
   contentContainer: {
     paddingTop: 80, // Adjust according to the height of your sticky header

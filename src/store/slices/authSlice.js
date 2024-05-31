@@ -32,6 +32,26 @@ export const authSlice = createSlice({
 
 export const {setUser, setLoading, setError} = authSlice.actions;
 
+// Initialize Auth Listener
+export const initializeAuth = () => async dispatch => {
+  dispatch(setLoading(true));
+  auth().onAuthStateChanged(async user => {
+    if (user) {
+      try {
+        const userDoc = await db().collection('students').doc(user.uid).get();
+        if (userDoc.exists) {
+          dispatch(setUser(userDoc.data()));
+        }
+      } catch (error) {
+        dispatch(setError(error.message));
+      }
+    } else {
+      dispatch(setUser(null));
+    }
+    dispatch(setLoading(false));
+  });
+};
+
 // SignUp
 export const registerUser =
   ({displayName, email, password, phoneNumber}) =>
@@ -43,6 +63,7 @@ export const registerUser =
         'Please fill your all required fields',
         ToastAndroid.SHORT,
       );
+      dispatch(setLoading(false));
       return;
     }
     try {
@@ -54,15 +75,18 @@ export const registerUser =
         displayName: displayName,
         email: email,
         phoneNumber: phoneNumber,
+        role: 'student',
+        id: auth().currentUser?.uid,
       });
       dispatch(
         setUser({
           displayName: displayName,
           email: email,
           phoneNumber: phoneNumber,
+          role: 'student',
+          id: auth().currentUser?.uid,
         }),
       );
-      setLoading(false);
       ToastAndroid.show('User registered successfully!', ToastAndroid.SHORT);
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
@@ -75,7 +99,9 @@ export const registerUser =
         ToastAndroid.show('Password is too weak', ToastAndroid.SHORT);
       }
       console.log('Error', error.message);
-      setLoading(false);
+      dispatch(setError(error.message));
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -89,18 +115,21 @@ export const loginUser =
           'Please enter your email and password correctly',
           ToastAndroid.SHORT,
         );
+        dispatch(setLoading(false));
+        return;
       }
       await auth().signInWithEmailAndPassword(email, password);
       const currentUser = auth().currentUser;
       if (currentUser) {
-        dispatch(
-          setUser({
-            displayName: currentUser.displayName || '',
-            email: currentUser.email || '',
-          }),
-        );
+        const userDoc = await db()
+          .collection('students')
+          .doc(currentUser.uid)
+          .get();
+        if (userDoc.exists) {
+          dispatch(setUser(userDoc.data()));
+        }
+        ToastAndroid.show('User logged in!', ToastAndroid.SHORT);
       }
-      ToastAndroid.show('User logged in!', ToastAndroid.SHORT);
     } catch (error) {
       if (error.code === 'auth/user-not-found') {
         ToastAndroid.show('User not found', ToastAndroid.SHORT);

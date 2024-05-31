@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,16 +7,18 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
-import { colors } from '../../utils/styles';
+import {colors} from '../../utils/styles';
 import ImagePicker from 'react-native-image-crop-picker';
 import CustomModal from '../../components/Modal';
 import TermsOfUse from '../TermsConditions';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
-import { ToastAndroid } from 'react-native';
+import {ToastAndroid} from 'react-native';
 import BasicInfoButton from '../../components/basicInfo';
+import {useSelector} from 'react-redux';
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const user = useSelector(state => state?.auth?.user);
 
   const [profileImage, setProfileImage] = useState(null);
   // State to store profile image
@@ -83,7 +85,7 @@ const ProfileScreen = () => {
       >
         <>
           {profileImage ? (
-            <Image source={{ uri: profileImage }} style={styles.coverImage} />
+            <Image source={{uri: profileImage}} style={styles.coverImage} />
           ) : (
             <Image
               source={require('../../assets/images/profile.jpg')}
@@ -133,7 +135,7 @@ const ProfileScreen = () => {
           }}>
           <>
             {profileImage ? (
-              <Image source={{ uri: profileImage }} style={styles.profileImage} />
+              <Image source={{uri: profileImage}} style={styles.profileImage} />
             ) : (
               <Image
                 source={require('../../assets/images/profile.jpg')}
@@ -146,25 +148,36 @@ const ProfileScreen = () => {
 
         {/* Edit button on profile image */}
 
-        <Text style={styles.name}> Abdul Saeed</Text>
+        <Text style={styles.name}>{user?.displayName}</Text>
 
-        <Text style={styles.infoText}>Department: Software Engineering</Text>
+        <Text style={styles.infoText}>{user?.email}</Text>
       </View>
 
       {/* Basic Information Card */}
 
       {/* Buttons */}
       <View style={styles.buttonsContainer}>
-        <BasicInfoButton source={require('../../assets/icons/setting.png')} buttonText={'Settings'} onPress={() => {
-          navigation.navigate('Setting')
-        }} />
-        <BasicInfoButton source={require('../../assets/icons/edit.png')} buttonText={'Edit Profile'} onPress={() => { navigation.navigate('editProfile') }} />
-        <BasicInfoButton     source={require('../../assets/icons/notification.png')} buttonText={'Notifications'} onPress={() => {
-          navigation.navigate('Notification')
-        }} />
-
-
-    
+        <BasicInfoButton
+          source={require('../../assets/icons/setting.png')}
+          buttonText={'Settings'}
+          onPress={() => {
+            navigation.navigate('Setting');
+          }}
+        />
+        <BasicInfoButton
+          source={require('../../assets/icons/edit.png')}
+          buttonText={'Edit Profile'}
+          onPress={() => {
+            navigation.navigate('editProfile');
+          }}
+        />
+        <BasicInfoButton
+          source={require('../../assets/icons/notification.png')}
+          buttonText={'Notifications'}
+          onPress={() => {
+            navigation.navigate('Notification');
+          }}
+        />
       </View>
 
       {/* Sign Out Button */}

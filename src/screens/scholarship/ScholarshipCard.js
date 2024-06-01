@@ -1,8 +1,13 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Button from '../../components/Button';
+import { useSelector } from 'react-redux';
 
-const ScholarshipComponent = ({handleMore, data}) => {
+const ScholarshipComponent = ({ handleMore, data }) => {
+  const userId = useSelector(state => state.auth.user.id);
+  const applications = useSelector(state => state.applications.applications);
+  const hasApplied = applications.some(app => app.scholarshipId === data.id && app.userId === userId);
+
   return (
     <View style={styles.scholarshipContainer}>
       <Text style={styles.scholarshipName}>{data?.name}</Text>
@@ -11,6 +16,7 @@ const ScholarshipComponent = ({handleMore, data}) => {
       <Text style={styles.deadlineText}>Posted By: {data?.postedBy}</Text>
       <Text style={styles.deadlineText}>Deadline: {data?.deadline}</Text>
       <Text style={styles.deadlineText}>Amount: {data?.amount}</Text>
+      {hasApplied && <Text style={styles.appliedText}>Already Applied</Text>}
       <Button text={'Read More'} onPress={handleMore} />
     </View>
   );
@@ -22,7 +28,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -47,6 +53,11 @@ const styles = StyleSheet.create({
   deadlineText: {
     fontSize: 14,
     color: '#d9534f',
+    marginBottom: 20,
+  },
+  appliedText: {
+    fontSize: 14,
+    color: '#28a745',
     marginBottom: 20,
   },
   button: {

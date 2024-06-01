@@ -7,11 +7,14 @@ import {useNavigation} from '@react-navigation/native';
 import {colors} from '../../utils/styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchScholarships} from '../../store/slices/scholarshipSlice';
+import {fetchAppliedScholarships} from '../../store/slices/applicationsSlice';
 
 const ScholarshipList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const scholarships = useSelector(state => state.scholarships.items);
+  const applications = useSelector(state => state.applications.applications);
+  const userId = useSelector(state => state?.auth?.user?.id);
 
   useEffect(() => {
     dispatch(fetchScholarships());
@@ -21,43 +24,13 @@ const ScholarshipList = () => {
     console.log(scholarships);
   }, []);
 
-  // const scholarships = [
-  //   {
-  //     id: 1,
-  //     name: 'Example Scholarship 1',
-  //     description: 'Description for scholarship 1',
-  //     postedDate: 'April 25, 2024',
-  //     deadline: 'May 15, 2024',
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Example Scholarship 2',
-  //     description: 'Description for scholarship 2',
-  //     postedDate: 'April 26, 2024',
-  //     deadline: 'May 16, 2024',
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Example Scholarship 3',
-  //     description: 'Description for scholarship 3',
-  //     postedDate: 'April 27, 2024',
-  //     deadline: 'May 17, 2024',
-  //   },
-  //   {
-  //     id: 4,
-  //     name: 'Example Scholarship 4',
-  //     description: 'Description for scholarship 4',
-  //     postedDate: 'April 28, 2024',
-  //     deadline: 'May 18, 2024',
-  //   },
-  //   {
-  //     id: 5,
-  //     name: 'Example Scholarship 5',
-  //     description: 'Description for scholarship 5',
-  //     postedDate: 'April 29, 2024',
-  //     deadline: 'May 19, 2024',
-  //   },
-  // ];
+  useEffect(() => {
+    dispatch(fetchAppliedScholarships(userId));
+    console.log(
+      '++++++++++++++++++++++Applied Scholarships fetched successfully++++++++++++',
+    );
+    console.log(applications);
+  }, []);
 
   return (
     <View style={styles.container}>

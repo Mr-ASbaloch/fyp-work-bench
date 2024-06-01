@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,20 @@ import {
 import InputField from '../../formFields/inputfields';
 import {colors} from '../../utils/styles';
 import formFields from '../../formFields/formFields';
+import {useDispatch, useSelector} from 'react-redux';
+import {applyForScholarship} from '../../store/slices/applicationsSlice';
+import {useNavigation} from '@react-navigation/native';
 
-const PersonalData = () => {
+const PersonalData = ({route}) => {
+  const scholarshipId = route.params?.scholarship?.id;
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    console.log(scholarshipId);
+  }, [scholarshipId]);
+
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
     fullName: '',
     fatherName: '',
@@ -45,23 +57,16 @@ const PersonalData = () => {
     rentPayment: '',
     plotSize: '',
     coveredArea: '',
+    scholarshipId,
     accDetails: [
       {location: '', bedrooms: '', airConditioners: '', monthlyRent: ''},
     ],
     tuitionCharges: '',
-    gotScholarships: false,
-    scholarships: [
-      {
-        instituteName: '',
-        scholarshipName: '',
-        totalAmount: '',
-        period: '',
-        classLevel: '',
-      },
-    ],
     sop: '',
-    otherHouse: false,
+    // otherHouse: false,
   });
+
+  const userId = useSelector(state => state?.auth?.user?.id);
 
   const handleChange = (name, value) => {
     setForm({...form, [name]: value});
@@ -93,7 +98,7 @@ const PersonalData = () => {
     ]);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const requiredFields = [
       'fullName',
       'email',
@@ -110,7 +115,18 @@ const PersonalData = () => {
         return;
       }
     }
-    console.log(form);
+
+    // Remove undefined fields
+    const filteredForm = {};
+    for (const key in form) {
+      if (form[key] !== undefined) {
+        filteredForm[key] = form[key];
+      }
+    }
+
+    await dispatch(applyForScholarship({form: filteredForm, userId}));
+    navigation.navigate('dashBoard');
+    console.log(filteredForm);
   };
 
   const renderSection = section => {

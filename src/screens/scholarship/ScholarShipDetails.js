@@ -26,7 +26,7 @@ const ScholarshipDetail = ({route}) => {
       <Button
         text={'apply now'}
         onPress={() => {
-          navigation.navigate('applyForm');
+          navigation.navigate('applyForm', {scholarship});
         }}
       />
     </ScrollView>

@@ -1,8 +1,8 @@
-import { View, StatusBar } from 'react-native';
+import {View, StatusBar} from 'react-native';
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {useState, useEffect} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import RegisterScreen from '../screens/authScreens/RegisterScreen';
 import LoginScreen from '../screens/authScreens/LoginScreen';
 import FirstScreen from '../screens/firstScreen';
@@ -14,12 +14,8 @@ import ResetPassword from '../screens/ResetPassword';
 import ProfileScreen from '../screens/profileScreens/index';
 import EditProfile from '../screens/profileScreens/editProfile';
 import TermsOfUse from '../screens/TermsConditions';
-
 import ScholarshipList from '../screens/scholarship';
 import PersonalData from '../screens/scholarship/apply';
-import FormComponent from '../screens/scholarship/secondStepForm';
-import FamilyExpenditures from '../screens/scholarship/thirdForm';
-import UtilitiesAndExpenditures from '../screens/scholarship/fifthForm';
 import CongratulationScreen from '../screens/scholarship/success';
 import auth from '@react-native-firebase/auth';
 import SplashScreen from '../screens/Splash';
@@ -37,13 +33,13 @@ import Header from '../components/AppBar';
 import PrivacyPolicyScreen from '../screens/privacyPolicy';
 import AboutUsScreen from '../screens/aboutUs';
 import ComplaintScreen from '../screens/customerSupport/complaintForm';
-import FourthForm from '../screens/scholarship/fourthForm';
 import ScholarshipDetail from '../screens/scholarship/ScholarShipDetails';
+import Applications from '../screens/applications/Applications';
 
 const stack = createNativeStackNavigator();
-const StatusBarWrapper = ({ children }) => {
+const StatusBarWrapper = ({children}) => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <StatusBar hidden />
       {children}
     </View>
@@ -80,7 +76,6 @@ export default function NavigationScreen() {
               /> */}
           {user ? (
             <>
-
               <stack.Screen
                 name="dashBoard"
                 component={TabNavigation}
@@ -88,7 +83,7 @@ export default function NavigationScreen() {
                   headerShown: false,
                 }}
               />
-               <stack.Screen
+              <stack.Screen
                 name="Details"
                 component={ScholarshipDetail}
                 options={{
@@ -124,27 +119,6 @@ export default function NavigationScreen() {
                 }}
               />
               <stack.Screen
-                name="secondForm"
-                component={FormComponent}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <stack.Screen
-                name="thirdForm"
-                component={FamilyExpenditures}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <stack.Screen
-                name="fourthForm"
-                component={FourthForm}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <stack.Screen
                 name="Support"
                 component={SupportAndServices}
                 options={{
@@ -154,31 +128,30 @@ export default function NavigationScreen() {
               <stack.Screen
                 name="Complaint"
                 component={NoComplaintFoundScreen}
-              // options={{
-              //   headerShown: false,
-              // }}
+                // options={{
+                //   headerShown: false,
+                // }}
               />
-                <stack.Screen
+              <stack.Screen
                 name="Scholarships"
                 component={ScholarshipList}
-              // options={{
-              //   headerShown: false,
-              // }}
+                // options={{
+                //   headerShown: false,
+                // }}
+              />
+              <stack.Screen
+                name="applications"
+                component={Applications}
+                // options={{
+                //   headerShown: false,
+                // }}
               />
               <stack.Screen
                 name="Tutorial"
                 component={NoVideoFoundScreen}
-              // options={{
-              //   headerShown: false,
-              // }}
-              />
-
-              <stack.Screen
-                name="fifthForm"
-                component={UtilitiesAndExpenditures}
-                options={{
-                  headerShown: false,
-                }}
+                // options={{
+                //   headerShown: false,
+                // }}
               />
               <stack.Screen
                 name="congratsScreen"
@@ -223,9 +196,9 @@ export default function NavigationScreen() {
               <stack.Screen
                 name="StatusResult"
                 component={StatusResult}
-              // options={{
-              //   headerShown: false,
-              // }}
+                // options={{
+                //   headerShown: false,
+                // }}
               />
               <stack.Screen
                 name="AppBar"
@@ -244,39 +217,39 @@ export default function NavigationScreen() {
               <stack.Screen
                 name="Notification"
                 component={NotificationScreen}
-              // options={{
-              //   title: 'C',
-              // }}
+                // options={{
+                //   title: 'C',
+                // }}
               />
-               <stack.Screen
+              <stack.Screen
                 name="Terms and Conditions"
                 component={TermsOfUse}
-              // options={{
-              //   title: 'C',
-              // }}
+                // options={{
+                //   title: 'C',
+                // }}
               />
-               <stack.Screen
+              <stack.Screen
                 name="Privacy Policy"
                 component={PrivacyPolicyScreen}
-              // options={{
-              //   title: 'C',
-              // }}
+                // options={{
+                //   title: 'C',
+                // }}
               />
-                <stack.Screen
+              <stack.Screen
                 name="Complaints"
                 component={ComplaintScreen}
-              // options={{
-              //   title: 'C',
-              // }}
+                // options={{
+                //   title: 'C',
+                // }}
               />
-               <stack.Screen
+              <stack.Screen
                 name="About Us"
                 component={AboutUsScreen}
-              // options={{
-              //   title: 'C',
-              // }}
+                // options={{
+                //   title: 'C',
+                // }}
               />
-                <stack.Screen
+              <stack.Screen
                 name="LoginScreen"
                 component={LoginScreen}
                 options={{
@@ -353,7 +326,6 @@ export default function NavigationScreen() {
                   headerShown: false,
                 }}
               />
-
             </>
           )}
         </stack.Navigator>

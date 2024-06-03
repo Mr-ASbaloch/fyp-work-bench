@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { colors } from '../utils/styles';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {colors} from '../utils/styles';
+import CustomTextInput from '../components/TextInput';
 
 const InputField = ({ label, required, value, onChangeText, type, ...props }) => {
   switch (type) {
@@ -13,13 +14,19 @@ const InputField = ({ label, required, value, onChangeText, type, ...props }) =>
           <Text style={styles.label}>
             {label} {required && <Text style={{ color: 'red' }}>*</Text>}
           </Text>
-          <TextInput
+          <CustomTextInput
             style={styles.input}
             value={value}
             onChangeText={onChangeText}
             {...props}
-            keyboardType={type === 'email' ? 'email-address' : type === 'phone' ? 'phone-pad' : 'default'}
-            placeholder={props.placeholder}
+            keyboardType={
+              type === 'email'
+                ? 'email-address'
+                : type === 'phone'
+                ? 'phone-pad'
+                : 'default'
+            }
+            label={label}
           />
         </View>
       );
@@ -29,7 +36,7 @@ const InputField = ({ label, required, value, onChangeText, type, ...props }) =>
           <Text style={styles.label}>
             {label} {required && <Text style={{ color: 'red' }}>*</Text>}
           </Text>
-          <TextInput
+          <CustomTextInput
             style={[styles.input, styles.textArea]}
             value={value}
             onChangeText={onChangeText}

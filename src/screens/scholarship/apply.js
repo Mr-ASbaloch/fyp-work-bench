@@ -47,6 +47,7 @@ const PersonalData = ({ route }) => {
     degreeProgram: '',
   });
 
+
   const handleChange = (name, value) => {
     setForm({ ...form, [name]: value });
   };

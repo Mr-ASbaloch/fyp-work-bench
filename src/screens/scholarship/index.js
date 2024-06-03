@@ -13,9 +13,10 @@ const ScholarshipList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const scholarships = useSelector(state => state.scholarships.items);
-
-  const applications = useSelector(state => state?.applications?.items);
+  const applications = useSelector(state => state.applications.applications);
   const userId = useSelector(state => state?.auth?.user?.id);
+
+  // s
   const scholarshipId = useSelector(state => state?.scholarships?.items?.id);
 
   useEffect(() => {

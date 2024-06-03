@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {colors} from '../utils/styles';
 import CustomTextInput from '../components/TextInput';
 
-const InputField = ({ label, required, value, onChangeText, type, ...props }) => {
+const InputField = ({label, required, value, onChangeText, type, ...props}) => {
   switch (type) {
     case 'text':
     case 'email':
@@ -12,7 +12,7 @@ const InputField = ({ label, required, value, onChangeText, type, ...props }) =>
       return (
         <View style={styles.inputContainer}>
           <Text style={styles.label}>
-            {label} {required && <Text style={{ color: 'red' }}>*</Text>}
+            {label} {required && <Text style={{color: 'red'}}>*</Text>}
           </Text>
           <CustomTextInput
             style={styles.input}
@@ -34,7 +34,7 @@ const InputField = ({ label, required, value, onChangeText, type, ...props }) =>
       return (
         <View style={styles.inputContainer}>
           <Text style={styles.label}>
-            {label} {required && <Text style={{ color: 'red' }}>*</Text>}
+            {label} {required && <Text style={{color: 'red'}}>*</Text>}
           </Text>
           <CustomTextInput
             style={[styles.input, styles.textArea]}
@@ -49,7 +49,9 @@ const InputField = ({ label, required, value, onChangeText, type, ...props }) =>
     case 'checkbox':
       return (
         <View style={styles.checkboxContainer}>
-          <TouchableOpacity onPress={() => onChangeText(!value)} style={styles.checkbox}>
+          <TouchableOpacity
+            onPress={() => onChangeText(!value)}
+            style={styles.checkbox}>
             <View style={value ? styles.checked : styles.unchecked} />
             <Text style={styles.checkboxText}>{label}</Text>
           </TouchableOpacity>

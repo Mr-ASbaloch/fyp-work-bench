@@ -4,9 +4,9 @@ import {StyleSheet} from 'react-native';
 import {colors} from '../utils/styles';
 // import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-const Button = ({text, onPress}) => {
+const Button = ({text, onPress, disabled}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
+    <TouchableOpacity onPress={onPress} style={styles.button} disabled={disabled}>
       <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );

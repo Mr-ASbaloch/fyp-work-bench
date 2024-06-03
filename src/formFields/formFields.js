@@ -25,7 +25,12 @@ const formFields = [
     section: 'University Information',
     fields: [
       {name: 'department', label: 'Department', type: 'text', required: true},
-      {name: 'degreeProgram', label: 'Degree Program', type: 'text', required: true},
+      {
+        name: 'degreeProgram',
+        label: 'Degree Program',
+        type: 'text',
+        required: true,
+      },
       {name: 'semester', label: 'Semester', type: 'text', required: true},
       {
         name: 'currentCGPA',

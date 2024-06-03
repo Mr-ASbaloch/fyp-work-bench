@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import Button from '../../components/Button';
 import { colors } from '../../utils/styles';
 import CustomTextInput from '../../components/TextInput';
@@ -77,7 +77,7 @@ const Login = () => {
       </View>
 
       {/* Login Button with Loader */}
-      <Button text={loading ? 'Logging In...' : 'Login'} onPress={handleSubmit} loading={loading} />
+      <Button text={loading ? <ActivityIndicator size="small" color="#fff" /> : 'Login'} onPress={handleSubmit} loading={loading} />
 
       <View style={styles.registerTextContainer}>
         <Text style={styles.buttonText}>Don't have an account?</Text>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { Alert, Image, ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import Button from '../../components/Button';
 import { colors, commonStyles } from '../../utils/styles';
 import NavigationArrow from '../../components/NavigationArrow';
@@ -22,6 +21,11 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isValidPassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleSubmit = async () => {
     // Trimmed fields
     const trimmedEmail = email.trim();
@@ -35,7 +39,20 @@ const Register = () => {
       Alert.alert('Error', 'All fields are required');
       return;
     }
-    // Other validation checks...
+
+    if (!isValidPassword(trimmedPassword)) {
+      Alert.alert('Error', 'Password must be at least 8 characters long and include digits, special characters, uppercase, and lowercase letters.');
+      return;
+    }
+
+    if (trimmedPassword !== trimmedConfirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
 
     // Set loading state to true
     setLoading(true);
@@ -62,7 +79,6 @@ const Register = () => {
     }
   };
 
-  // Function to display custom toast
   const showToast = (title, message) => {
     Alert.alert(title, message);
   };
@@ -99,8 +115,8 @@ const Register = () => {
         />
       </View>
 
-      {/* Register Button with Loader */}
-      <Button text={loading ? 'Registering...' : 'Register Account'} onPress={handleSubmit} loading={loading} />
+      <Button text={loading ? <ActivityIndicator size="small" color="#fff" /> : 'Register Account'} onPress={handleSubmit} loading={loading} />
+
 
       <View style={styles.registerTextContainer}>
         <Text style={styles.buttonText}>Already Have Account?</Text>

@@ -7,7 +7,7 @@ import {useNavigation} from '@react-navigation/native';
 import {colors} from '../../utils/styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchScholarships} from '../../store/slices/scholarshipSlice';
-import {fetchAppliedScholarships} from '../../store/slices/applicationsSlice';
+import { fetchYourApplications } from '../../store/slices/applicationsSlice';
 
 const ScholarshipList = () => {
   const navigation = useNavigation();
@@ -15,6 +15,9 @@ const ScholarshipList = () => {
   const scholarships = useSelector(state => state.scholarships.items);
   const applications = useSelector(state => state.applications.applications);
   const userId = useSelector(state => state?.auth?.user?.id);
+
+  // s
+  const scholarshipId = useSelector(state => state?.scholarships?.items?.id);
 
   useEffect(() => {
     dispatch(fetchScholarships());
@@ -25,7 +28,7 @@ const ScholarshipList = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchAppliedScholarships(userId));
+    dispatch(fetchYourApplications(userId));
     console.log(
       '++++++++++++++++++++++Applied Scholarships fetched successfully++++++++++++',
     );

@@ -1,17 +1,16 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Header from '../../components/AppBar';
 
 import ImageCarousel from '../../components/Scroller';
 
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import DashboardCard from '../../components/dashBoardCard';
 import HelpAndSupportCard from '../../components/supportCard';
 // import HomCard from '../../components/homeCard';
 
-
 // const Tab = createBottomTabNavigator();
 
-const Dashboard = ({ navigation }) => {
+const Dashboard = ({navigation}) => {
   // const navigation = useNavigation();
 
   const images = [
@@ -26,8 +25,7 @@ const Dashboard = ({ navigation }) => {
     <>
       <View style={styles.container}>
         <Header />
-        <ScrollView showsVerticalScrollIndicator={false} >
-
+        <ScrollView showsVerticalScrollIndicator={false}>
           <ImageCarousel images={images} />
           {/* <Text style={styles.cardText}>Dashboard</Text> */}
           <Text
@@ -50,37 +48,42 @@ const Dashboard = ({ navigation }) => {
               width: '100%',
               paddingHorizontal: 10,
             }}>
-            <DashboardCard imageSource={require('../../assets/icons/menu.png')}
+            <DashboardCard
+              imageSource={require('../../assets/icons/menu.png')}
               subTitle=" Scholarship list"
               onPress={() => navigation.navigate('scholarship')}
             />
-            <DashboardCard imageSource={require('../../assets/icons/search.png')}
+            <DashboardCard
+              imageSource={require('../../assets/icons/search.png')}
               subTitle=" Search Scholarships"
-            // onPress={''}
+              // onPress={''}
             />
-            <DashboardCard imageSource={require('../../assets/icons/aim.png')}
-              subTitle="Achieve Dreams"
-            // onPress={''}
+            <DashboardCard
+              imageSource={require('../../assets/icons/aim.png')}
+              subTitle="Your Applications"
+              onPress={() => {
+                navigation.navigate('applications');
+              }}
             />
-            <DashboardCard imageSource={require('../../assets/icons/protection.png')}
+            <DashboardCard
+              imageSource={require('../../assets/icons/protection.png')}
               subTitle="Account Safety"
               onPress={() => {
-                navigation.navigate('safetyTips')
-
+                navigation.navigate('safetyTips');
               }}
             />
-            <DashboardCard imageSource={require('../../assets/icons/customer-support.png')}
+            <DashboardCard
+              imageSource={require('../../assets/icons/customer-support.png')}
               subTitle="Help center"
               onPress={() => {
-                navigation.navigate('Contact')
-
+                navigation.navigate('Contact');
               }}
             />
-            <DashboardCard imageSource={require('../../assets/icons/setting.png')}
+            <DashboardCard
+              imageSource={require('../../assets/icons/setting.png')}
               subTitle="Status"
               onPress={() => {
-                navigation.navigate('Status')
-
+                navigation.navigate('Status');
               }}
             />
           </View>
@@ -91,8 +94,6 @@ const Dashboard = ({ navigation }) => {
             source={require('../../assets/icons/customer.png')}
             onPressButton={() => navigation.navigate('Support')}
           />
-
-
         </ScrollView>
       </View>
     </>

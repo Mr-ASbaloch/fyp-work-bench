@@ -20,7 +20,7 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const user = useSelector(state => state?.auth?.user);
 
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   // State to store profile image
   const [CoverImage, setCoverImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);

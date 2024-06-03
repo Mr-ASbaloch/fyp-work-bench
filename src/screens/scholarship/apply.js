@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,106 +6,81 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Modal,
+  Image,
 } from 'react-native';
 import InputField from '../../formFields/inputfields';
 import {colors} from '../../utils/styles';
 import formFields from '../../formFields/formFields';
-import {useDispatch, useSelector} from 'react-redux';
 import {applyForScholarship} from '../../store/slices/applicationsSlice';
+import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import DocumentPicker from 'react-native-document-picker';
+import storage from '@react-native-firebase/storage';
 
 const PersonalData = ({route}) => {
-  const scholarshipId = route.params?.scholarship?.id;
-
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    console.log(scholarshipId);
-  }, [scholarshipId]);
-
+  const {scholarship} = route?.params;
+  const scholarshipId = scholarship?.id;
+  const userId = useSelector(state => state?.auth?.user?.id);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [form, setForm] = useState({
     fullName: '',
-    fatherName: '',
     birthdate: '',
     email: '',
     mobileNumber: '',
-    otherMobileNumber: '',
     homeAddress: '',
-    streetAddress: '',
     city: '',
     province: '',
+    department: '',
+    semester: '',
+    currentCGPA: '',
+    otherMobileNumber: '',
     postalCode: '',
     tehsilAddress: '',
-    status: '',
-    professionalStatus: '',
-    companyName: '',
-    telOff: '',
-    mobile: '',
-    occupationType: '',
-    ntn: '',
-    designation: '',
-    grossIncome: '',
-    netMonthlyIncome: '',
-    supportingPersonName: '',
-    relationship: '',
-    supportingPersonOccupation: '',
-    monthlyFinancialSupport: '',
+    netFamilyIncome: '',
     assetIncome: '',
-    accType: '',
-    accStatus: '',
     rentPayment: '',
-    plotSize: '',
-    coveredArea: '',
-    scholarshipId,
-    accDetails: [
-      {location: '', bedrooms: '', airConditioners: '', monthlyRent: ''},
-    ],
-    tuitionCharges: '',
     sop: '',
-    // otherHouse: false,
+    scholarshipId,
+    status: 'submitted',
+    degreeProgram: '',
+    documentUrl: '',
   });
-
-  const userId = useSelector(state => state?.auth?.user?.id);
+  const [document, setDocument] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (name, value) => {
     setForm({...form, [name]: value});
   };
 
-  const handleAccDetailsChange = (index, field, value) => {
-    const newDetails = [...form.accDetails];
-    newDetails[index][field] = value;
-    handleChange('accDetails', newDetails);
-  };
-
-  const handleAddAccommodation = () => {
-    handleChange('accDetails', [
-      ...form.accDetails,
-      {location: '', bedrooms: '', airConditioners: '', monthlyRent: ''},
-    ]);
-  };
-
-  const handleAddScholarship = () => {
-    handleChange('scholarships', [
-      ...form.scholarships,
-      {
-        instituteName: '',
-        scholarshipName: '',
-        totalAmount: '',
-        period: '',
-        classLevel: '',
-      },
-    ]);
+  const handleDocumentPicker = async () => {
+    try {
+      const result = await DocumentPicker.pick({
+        type: [DocumentPicker.types.pdf],
+      });
+      setDocument(result[0]);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User cancelled the picker');
+      } else {
+        console.log('DocumentPicker Error: ', err);
+      }
+    }
   };
 
   const handleSubmit = async () => {
     const requiredFields = [
       'fullName',
+      'birthdate',
       'email',
       'mobileNumber',
       'homeAddress',
       'city',
       'province',
+      'department',
+      'semester',
+      'currentCGPA',
       'postalCode',
       'tehsilAddress',
     ];
@@ -116,17 +91,28 @@ const PersonalData = ({route}) => {
       }
     }
 
-    // Remove undefined fields
-    const filteredForm = {};
-    for (const key in form) {
-      if (form[key] !== undefined) {
-        filteredForm[key] = form[key];
-      }
+    if (!document) {
+      Alert.alert('Error', 'Please upload a PDF document');
+      return;
     }
 
+    // Upload document to Firestore Storage
+    const documentUri = document.uri;
+    const documentRef = storage().ref(
+      `applications/${userId}/${document.name}`,
+    );
+    await documentRef.putFile(documentUri);
+    const documentUrl = await documentRef.getDownloadURL();
+
+    // Update form with document URL
+    const filteredForm = {
+      ...form,
+      documentUrl,
+    };
+    setLoading(true);
     await dispatch(applyForScholarship({form: filteredForm, userId}));
-    navigation.navigate('dashBoard');
-    console.log(filteredForm);
+    setLoading(false);
+    navigation.goBack();
   };
 
   const renderSection = section => {
@@ -141,148 +127,88 @@ const PersonalData = ({route}) => {
             value={form[field.name]}
             onChangeText={text => handleChange(field.name, text)}
             type={field.type}
-            placeholder={field.placeholder}
+            options={field.options}
           />
         ))}
-        {section.subFields &&
-          Object.keys(section.subFields).map(subFieldKey => (
-            <View key={subFieldKey}>
-              <Text style={styles.subSectionTitle}>{subFieldKey}</Text>
-              {form[subFieldKey].map((subField, index) => (
-                <View key={index} style={styles.subSection}>
-                  {section.subFields[subFieldKey].map(subFieldConfig => (
-                    <InputField
-                      key={subFieldConfig.name}
-                      label={subFieldConfig.label}
-                      value={subField[subFieldConfig.name]}
-                      onChangeText={text =>
-                        handleAccDetailsChange(index, subFieldConfig.name, text)
-                      }
-                      type={subFieldConfig.type}
-                    />
-                  ))}
-                </View>
-              ))}
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={
-                  subFieldKey === 'accDetails'
-                    ? handleAddAccommodation
-                    : handleAddScholarship
-                }>
-                <Text style={styles.addButtonText}>Add {subFieldKey}</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
       </View>
     );
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} style={{padding: 10}}>
-      {formFields.map(section => renderSection(section))}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
+    <ScrollView style={styles.container}>
+      {formFields.map(renderSection)}
+      <View style={styles.documentContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleDocumentPicker}>
+          <Text style={styles.buttonText}>Upload PDF</Text>
+        </TouchableOpacity>
+        <Text>
+          Upload one document file contaning the following Documents Id card
+          (frontend back), inter marks sheet/Degree, your CV
+        </Text>
+        {document && (
+          <View style={styles.documentPreview}>
+            <Text style={styles.documentName}>{document.name}</Text>
+            <TouchableOpacity onPress={() => setDocument(null)}>
+              <Text style={styles.removeDocument}>X</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit}
+        disabled={loading}>
+        <Text style={styles.buttonText}>
+          {loading ? `Submitting` : `Submit`}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
   section: {
-    marginBottom: 20,
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
-    color: colors.primary,
+    marginBottom: 12,
   },
-  subSectionTitle: {
+  documentContainer: {
+    marginBottom: 24,
+  },
+  button: {
+    backgroundColor: 'green',
+    padding: 12,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  buttonText: {
+    color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    color: colors.secondary,
   },
-  subSection: {
-    marginBottom: 15,
+  documentPreview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#f0f0f0',
+    padding: 8,
+    borderRadius: 4,
   },
-  inputContainer: {
-    marginBottom: 15,
-  },
-  label: {
+  documentName: {
     fontSize: 16,
-    marginBottom: 5,
     color: '#333',
   },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 10,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  checkbox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  checked: {
-    width: 20,
-    height: 20,
-    backgroundColor: colors.primary,
-    marginRight: 10,
-    borderRadius: 4,
-  },
-  unchecked: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#ccc',
-    marginRight: 10,
-    borderRadius: 4,
-  },
-  checkboxText: {
+  removeDocument: {
+    color: 'red',
     fontSize: 16,
-  },
-  addButton: {
-    backgroundColor: colors.secondary,
-    padding: 10,
-    borderRadius: 4,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  submitButton: {
-    backgroundColor: colors.bgPrimary,
-    padding: 15,
-    borderRadius: 4,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  submitButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });
 

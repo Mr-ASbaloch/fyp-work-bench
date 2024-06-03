@@ -25,6 +25,7 @@
     "react": "18.2.0",
     "react-native": "^0.73.7",
     "react-native-animated-splash-screen": "^2.0.5",
+    "react-native-document-picker": "^9.3.0",
     "react-native-image-crop-picker": "^0.40.3",
     "react-native-orientation-locker": "^1.6.0",
     "react-native-paper": "^5.12.3",

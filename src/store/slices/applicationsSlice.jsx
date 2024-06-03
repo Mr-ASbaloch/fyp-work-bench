@@ -1,14 +1,14 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import firestore from '@react-native-firebase/firestore';
-import {ToastAndroid} from 'react-native';
+import { ToastAndroid } from 'react-native';
 
 // Async thunk to handle the application process
 export const applyForScholarship = createAsyncThunk(
   'applications/applyForScholarship',
-  async ({form, userId}) => {
+  async ({ form, userId }) => {
     try {
       const applicationRef = firestore().collection('applications').doc();
-      await applicationRef.set({...form, userId});
+      await applicationRef.set({ ...form, userId });
 
       const scholarshipRef = firestore()
         .collection('scholarships')
@@ -20,7 +20,7 @@ export const applyForScholarship = createAsyncThunk(
         'Application submitted successfully',
         ToastAndroid.SHORT,
       );
-      return {id: applicationRef.id, ...form};
+      return { id: applicationRef.id, ...form };
     } catch (error) {
       console.log('error from slice', error.message);
       throw new Error(error.message);
@@ -31,13 +31,13 @@ export const applyForScholarship = createAsyncThunk(
 // Async thunk to fetch the applied scholarships of the current user
 export const fetchYourApplications = createAsyncThunk(
   'applications/fetchYourApplications',
-  async (userId, {rejectWithValue}) => {
+  async (userId, { rejectWithValue }) => {
     try {
       const snapshot = await firestore()
         .collection('applications')
         .where('userId', '==', userId)
         .get();
-      const applications = snapshot.docs.map(doc => ({
+      const applications = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -56,9 +56,9 @@ const applicationsSlice = createSlice({
     error: null,
   },
   reducers: {},
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(applyForScholarship.pending, state => {
+      .addCase(applyForScholarship.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(applyForScholarship.fulfilled, (state, action) => {
@@ -69,8 +69,7 @@ const applicationsSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-
-      .addCase(fetchYourApplications.pending, state => {
+      .addCase(fetchYourApplications.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchYourApplications.fulfilled, (state, action) => {

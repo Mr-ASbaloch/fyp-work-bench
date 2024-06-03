@@ -1,19 +1,30 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {colors} from '../utils/styles';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
+import { colors } from '../utils/styles';
 import CustomTextInput from '../components/TextInput';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-const InputField = ({label, required, value, onChangeText, type, ...props}) => {
+const InputField = ({ label, required, value, onChangeText, type, options, ...props }) => {
+  const [visibleModal, setVisibleModal] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
+
+  const openModal = () => setVisibleModal(true);
+  const closeModal = () => setVisibleModal(false);
+
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(false);
+    setDate(currentDate);
+    onChangeText(currentDate.toISOString().split('T')[0]);
+  };
+
   switch (type) {
     case 'text':
     case 'email':
     case 'phone':
-    case 'date':
       return (
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>
-            {label} {required && <Text style={{color: 'red'}}>*</Text>}
-          </Text>
           <CustomTextInput
             style={styles.input}
             value={value}
@@ -26,7 +37,7 @@ const InputField = ({label, required, value, onChangeText, type, ...props}) => {
                 ? 'phone-pad'
                 : 'default'
             }
-            label={label}
+            label={required ? `${label} *` : label}
           />
         </View>
       );
@@ -34,7 +45,7 @@ const InputField = ({label, required, value, onChangeText, type, ...props}) => {
       return (
         <View style={styles.inputContainer}>
           <Text style={styles.label}>
-            {label} {required && <Text style={{color: 'red'}}>*</Text>}
+            {label} {required && <Text style={{ color: 'red' }}>*</Text>}
           </Text>
           <CustomTextInput
             style={[styles.input, styles.textArea]}
@@ -57,6 +68,60 @@ const InputField = ({label, required, value, onChangeText, type, ...props}) => {
           </TouchableOpacity>
         </View>
       );
+    case 'select':
+      return (
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>
+            {label} {required && <Text style={{ color: 'red' }}>*</Text>}
+          </Text>
+          <TouchableOpacity style={styles.input} onPress={openModal}>
+            <Text style={styles.selectText}>{value || `Select ${label}`}</Text>
+          </TouchableOpacity>
+          <Modal
+            visible={visibleModal}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={closeModal}>
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <FlatList
+                  data={options}
+                  keyExtractor={(item) => item}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.option}
+                      onPress={() => {
+                        onChangeText(item);
+                        closeModal();
+                      }}>
+                      <Text style={styles.optionText}>{item}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            </View>
+          </Modal>
+        </View>
+      );
+    case 'date':
+      return (
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>
+            {label} {required && <Text style={{ color: 'red' }}>*</Text>}
+          </Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
+            <Text style={styles.selectText}>{value || `Select ${label}`}</Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={onChangeDate}
+            />
+          )}
+        </View>
+      );
     default:
       return null;
   }
@@ -77,6 +142,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     paddingHorizontal: 10,
+    justifyContent: 'center',
+  },
+  selectText: {
+    color: '#333',
   },
   textArea: {
     height: 100,
@@ -107,6 +176,26 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   checkboxText: {
+    fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    padding: 20,
+    width: '80%',
+    maxHeight: '50%',
+  },
+  option: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  optionText: {
     fontSize: 16,
   },
 });

@@ -51,6 +51,21 @@ const PersonalData = ({route}) => {
   const [document, setDocument] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const validateEmail = email => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhoneNumber = phone => {
+    const phoneRegex = /^[0-9]{10,11}$/; // Allow only digits, 10 to 15 in length
+    return phoneRegex.test(phone);
+  };
+
+  const validateCGPA = cgpa => {
+    const cgpaRegex = /^\d+(\.\d{1,2})?$/; // Allow numbers with up to two decimal places
+    return cgpaRegex.test(cgpa) && parseFloat(cgpa) <= 4.0; // Assuming CGPA scale is out of 4.0
+  };
+
   const handleChange = (name, value) => {
     setForm({...form, [name]: value});
   };
@@ -69,7 +84,6 @@ const PersonalData = ({route}) => {
       }
     }
   };
-
   const handleSubmit = async () => {
     const requiredFields = [
       'fullName',
@@ -85,35 +99,119 @@ const PersonalData = ({route}) => {
       'postalCode',
       'tehsilAddress',
     ];
+
     for (let field of requiredFields) {
       if (!form[field]) {
-      Toast.show({ type: 'error', text1: 'Error', text2: 'All fields are required' });
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'All fields are required',
+        });
         return;
       }
     }
 
-    if (!document) {
-      Toast.show({ type: 'error', text1: 'Error', text2: 'Please upload a document' });
+    if (!validateEmail(form.email)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please enter a valid email address',
+      });
+      return;
+    }
+    if (!validatePhoneNumber(form.mobileNumber)) {
+      console.log('Invalid mobile number:', form.mobileNumber);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please enter a valid mobile number',
+      });
       return;
     }
 
-    // Upload document to Firestore Storage
-    const documentUri = document.uri;
-    const documentRef = storage().ref(
-      `applications/${userId}/${document.name}`,
-    );
-    await documentRef.putFile(documentUri);
-    const documentUrl = await documentRef.getDownloadURL();
+    if (
+      form.otherMobileNumber &&
+      !validatePhoneNumber(form.otherMobileNumber)
+    ) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please enter a valid other mobile number (10-15 digits)',
+      });
+      return;
+    }
 
-    // Update form with document URL
-    const filteredForm = {
-      ...form,
-      documentUrl,
+    if (!validateCGPA(form.currentCGPA)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please enter a valid CGPA (max 4.0)',
+      });
+      return;
+    }
+
+    if (!document) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please upload a document',
+      });
+      return;
+    }
+
+    // Check degree level
+    const degreeProgram = form.degreeProgram;
+    const degreeLevel = scholarship.degreeLevel; // Assuming the degree level of the scholarship is stored in this key
+
+    const degreeMap = {
+      Bachelors: 'BS',
+      Masters: 'MS',
+      PhD: 'PhD',
     };
+
+    if (degreeLevel !== 'All' && degreeMap[degreeProgram] !== degreeLevel) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `This scholarship is for ${degreeLevel} students only`,
+      });
+      return;
+    }
+
     setLoading(true);
-    await dispatch(applyForScholarship({form: filteredForm, userId}));
-    setLoading(false);
-    navigation.goBack();
+
+    try {
+      // Upload document to Firestore Storage
+      const documentUri = document.uri;
+      const documentRef = storage().ref(
+        `applications/${userId}/${document.name}`,
+      );
+      await documentRef.putFile(documentUri);
+      const documentUrl = await documentRef.getDownloadURL();
+
+      // Update form with document URL
+      const filteredForm = {
+        ...form,
+        documentUrl,
+      };
+
+      await dispatch(applyForScholarship({form: filteredForm, userId}));
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Application submitted successfully',
+      });
+      navigation.goBack();
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to submit application',
+      });
+      console.error('Submission error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderSection = section => {
@@ -129,7 +227,6 @@ const PersonalData = ({route}) => {
             onChangeText={text => handleChange(field.name, text)}
             type={field.type}
             options={field.options}
-        
           />
         ))}
       </View>

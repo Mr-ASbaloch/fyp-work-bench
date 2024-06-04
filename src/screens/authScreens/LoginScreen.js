@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { loginUser } from '../../store/slices/authSlice';
 
 const mainImage = require('../../assets/icons/Aid.png');
-
+import Toast from 'react-native-toast-message';
 const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -19,31 +19,32 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    // Check if both email and password are empty
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Email and password are required');
-      return;
-    }
-
-    // Email validation
+  
     if (!/\S+@\S+\.\S+/.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please enter a valid email address',
+      });
       return;
     }
 
-    // Set loading state to true
     setLoading(true);
 
     try {
-      // Attempt login
       await dispatch(loginUser({ email, password }));
-      // If login is successful, navigate to the dashboard or any other screen
+      // Toast.show({
+      //   type: 'success',
+      //   text1: 'Login Successful',
+      // });
       navigation.navigate('dashBoard');
     } catch (error) {
-      // Display error message if login fails
-      Alert.alert('Error', error.message);
+      // Toast.show({
+      //   type: 'error',
+      //   text1: 'Login Failed',
+      //   text2: error.message,
+      // });
     } finally {
-      // Reset loading state regardless of success or failure
       setLoading(false);
     }
   };

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import Toast from 'react-native-toast-message';
 import {
   View,
   Text,
@@ -86,13 +87,13 @@ const PersonalData = ({route}) => {
     ];
     for (let field of requiredFields) {
       if (!form[field]) {
-        Alert.alert('Error', 'Please fill out all required fields');
+      Toast.show({ type: 'error', text1: 'Error', text2: 'All fields are required' });
         return;
       }
     }
 
     if (!document) {
-      Alert.alert('Error', 'Please upload a PDF document');
+      Toast.show({ type: 'error', text1: 'Error', text2: 'Please upload a document' });
       return;
     }
 
@@ -128,6 +129,7 @@ const PersonalData = ({route}) => {
             onChangeText={text => handleChange(field.name, text)}
             type={field.type}
             options={field.options}
+        
           />
         ))}
       </View>

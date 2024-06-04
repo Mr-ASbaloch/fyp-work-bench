@@ -34,8 +34,8 @@ const InputField = ({ label, required, value, onChangeText, type, options, ...pr
               type === 'email'
                 ? 'email-address'
                 : type === 'phone'
-                ? 'phone-pad'
-                : 'default'
+                  ? 'phone-pad'
+                  : 'default'
             }
             label={required ? `${label} *` : label}
           />
@@ -106,9 +106,7 @@ const InputField = ({ label, required, value, onChangeText, type, options, ...pr
     case 'date':
       return (
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>
-            {label} {required && <Text style={{ color: 'red' }}>*</Text>}
-          </Text>
+
           <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
             <Text style={styles.selectText}>{value || `Select ${label}`}</Text>
           </TouchableOpacity>
@@ -141,11 +139,20 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 4,
-    paddingHorizontal: 10,
+    padding: 10,
     justifyContent: 'center',
+    backgroundColor: '#fff',
+    margin: 'auto',
+    width: '95%',
+    paddingVertical:2,
+    textAlign:'center',
+    display:'flex',
+    marginLeft:5
+
   },
   selectText: {
     color: '#333',
+    textAlign: 'center',	
   },
   textArea: {
     height: 100,

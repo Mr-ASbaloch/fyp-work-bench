@@ -1,13 +1,11 @@
-// ScholarshipList.js
-
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import React, {useEffect} from 'react';
+import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import ScholarshipComponent from './ScholarshipCard';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../../utils/styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchScholarships} from '../../store/slices/scholarshipSlice';
-import { fetchYourApplications } from '../../store/slices/applicationsSlice';
+import {fetchYourApplications} from '../../store/slices/applicationsSlice';
 
 const ScholarshipList = () => {
   const navigation = useNavigation();
@@ -16,41 +14,39 @@ const ScholarshipList = () => {
   const applications = useSelector(state => state.applications.applications);
   const userId = useSelector(state => state?.auth?.user?.id);
 
-  // s
-  const scholarshipId = useSelector(state => state?.scholarships?.items?.id);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     dispatch(fetchScholarships());
-    console.log(
-      '++++++++++++++++++++++Scholarships fetched successfully++++++++++++',
-    );
-    console.log(scholarships);
-  }, []);
-
-  useEffect(() => {
     dispatch(fetchYourApplications(userId));
-    console.log(
-      '++++++++++++++++++++++Applied Scholarships fetched successfully++++++++++++',
-    );
-    console.log(applications);
+    setLoading(false);
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.stickyHeader}>
-        <Text style={styles.heading}>Scholarship List</Text>
-      </View>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        {scholarships.map(scholarship => (
-          <ScholarshipComponent
-            key={scholarship?.id}
-            data={scholarship}
-            handleMore={() => {
-              navigation.navigate('Details', {scholarship});
-            }}
-          />
-        ))}
-      </ScrollView>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.blackText} />
+        </View>
+      ) : (
+        <View>
+          <View style={styles.stickyHeader}>
+            <Text style={styles.heading}>Scholarship List</Text>
+          </View>
+          <ScrollView contentContainerStyle={styles.contentContainer}>
+            {scholarships.map(scholarship => (
+              <ScholarshipComponent
+                key={scholarship?.id}
+                data={scholarship}
+                handleMore={() => {
+                  navigation.navigate('Details', {scholarship});
+                }}
+              />
+            ))}
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 };
@@ -85,5 +81,15 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 80, // Adjust according to the height of your sticky header
     paddingHorizontal: 20,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', // background blur
   },
 });

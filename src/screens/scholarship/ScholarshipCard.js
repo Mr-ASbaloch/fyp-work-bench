@@ -10,12 +10,10 @@ const ScholarshipComponent = ({ handleMore, data }) => {
 
   return (
     <View style={styles.scholarshipContainer}>
-      <Text style={styles.scholarshipName}>{data?.name}</Text>
-      <Text style={styles.description}>{data?.description}</Text>
-      <Text style={styles.dateText}>Posted Date: {data?.postedDate}</Text>
-      <Text style={styles.deadlineText}>Posted By: {data?.postedBy}</Text>
+      <Text numberOfLines={3} style={styles.scholarshipName}>{data?.title}</Text>
+      <Text numberOfLines={3} style={styles.description}>{data?.description}</Text>
+     
       <Text style={styles.deadlineText}>Deadline: {data?.deadline}</Text>
-      <Text style={styles.deadlineText}>Amount: {data?.amount}</Text>
       {hasApplied && <Text style={styles.appliedText}>Already Applied</Text>}
       <Button text={'Read More'} onPress={handleMore} />
     </View>

@@ -10,7 +10,7 @@ import { registerUser } from '../../store/slices/authSlice';
 import { useDispatch } from 'react-redux';
 
 const mainImage = require('../../assets/icons/Aid.png');
-
+import Toast from 'react-native-toast-message';
 const Register = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -36,21 +36,21 @@ const Register = () => {
 
     // Validation checks
     if (!trimmedEmail || !trimmedPassword || !trimmedName || !trimmedPhoneNumber || !trimmedConfirmPassword) {
-      Alert.alert('Error', 'All fields are required');
+     Toast.show({ type: 'error', text1: 'Error', text2: 'All fields are required' });
       return;
     }
 
     if (!isValidPassword(trimmedPassword)) {
-      Alert.alert('Error', 'Password must be at least 8 characters long and include digits, special characters, uppercase, and lowercase letters.');
+      Toast.show({ type: 'error', text1: 'Error', text2: 'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character' });
       return;
     }
 
     if (trimmedPassword !== trimmedConfirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Toast.show({ type: 'error', text1: 'Error', text2: 'Passwords do not match' });
       return;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      Toast.show({ type: 'error', text1: 'Error', text2: 'Please enter a valid email address' });
       return;
     }
 
@@ -67,21 +67,21 @@ const Register = () => {
       }));
 
       // Registration successful, show success toast
-      showToast('Success', 'Registration successful!');
+      Toast.show({ type: 'success', text1: 'Registration Successful' });
       // Optionally, navigate to another screen upon successful registration
       navigation.navigate('LoginScreen');
     } catch (error) {
       // Registration failed, show error toast
-      showToast('Error', error.message);
+    Toast.show({ type: 'error',  text1: error.message });
     } finally {
       // Reset loading state regardless of success or failure
       setLoading(false);
     }
   };
 
-  const showToast = (title, message) => {
-    Alert.alert(title, message);
-  };
+  // const showToast = (title, message) => {
+  //   Alert.alert(title, message);
+  // };
 
   return (
     <ScrollView style={{ backgroundColor: colors.white }}>

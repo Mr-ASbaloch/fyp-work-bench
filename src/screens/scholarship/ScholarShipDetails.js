@@ -1,12 +1,13 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, Text, ScrollView} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, ScrollView, View } from 'react-native';
 import Button from '../../components/Button';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
-import {fetchAppliedScholarships} from '../../store/slices/applicationsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { colors } from '../../utils/styles';
 
-const ScholarshipDetail = ({route}) => {
-  const {scholarship} = route.params;
+
+const ScholarshipDetail = ({ route }) => {
+  const { scholarship } = route.params;
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.user.id);
   const applications = useSelector(state => state.applications.applications);
@@ -14,34 +15,56 @@ const ScholarshipDetail = ({route}) => {
     app => app.scholarshipId === scholarship.id && app.userId === userId,
   );
 
+  const currentDate = new Date();
+  const deadlineDate = new Date(scholarship.deadline);
+  const isPastDeadline = currentDate > deadlineDate;
+
   useEffect(() => {
     console.log(scholarship);
-  }, []);
+  }, [scholarship]);
 
   const navigation = useNavigation();
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>{scholarship?.title}</Text>
-      <Text style={styles.sectionTitle}>
-        {scholarship?.eligibilityCriteria}
-      </Text>
-      <Text style={styles.sectionTitle}>Description</Text>
-      <Text style={styles.text}>{scholarship?.description}</Text>
-      <Text style={styles.sectionTitle}>Posted By</Text>
-      <Text style={styles.text}>{scholarship?.postedBy}</Text>
-      <Button
-        text={'Apply Now'}
-        onPress={() => {
-          navigation.navigate('applyForm', {scholarship});
+      <View 
+        style={{
+          padding: 10,
+          backgroundColor: 'white',
+          marginBottom: 20,
         }}
-        disabled={hasApplied}
-      />
-      {hasApplied && (
-        <Text style={styles.appliedText}>
-          You have already applied for this scholarship.
+      >
+        <Text style={styles.title}>{scholarship?.title}</Text>
+        <Text style={styles.sectionTitle}>
+          {scholarship?.eligibilityCriteria}
         </Text>
-      )}
+        <Text style={styles.sectionTitle}>Description</Text>
+        <Text style={styles.text}>{scholarship?.description}</Text>
+        <Text style={styles.sectionTitle}>Eligibility Criteria</Text>
+        <Text style={styles.text}>{scholarship?.criteria}</Text>
+        <Text style={styles.sectionTitle}>Academic Level</Text>
+        <Text style={styles.text}>{scholarship?.degreeLevel}</Text>
+        <Text style={styles.sectionTitle}>Posted At</Text>
+        <Text style={[styles.text]}>{scholarship?.createdAt}</Text>
+        <Text style={styles.sectionTitle}>Deadline</Text>
+        <Text style={[styles.text, { color: 'red' }]}>{scholarship?.deadline}</Text>
+        <Text style={styles.sectionTitle}>Amount</Text>
+        <Text style={[styles.text]}>{scholarship?.amount}</Text>
+        <Button
+          text={'Apply Now'}
+          onPress={() => {
+            navigation.navigate('applyForm', { scholarship });
+          }}
+          disabled={hasApplied || isPastDeadline}
+        />
+        {(hasApplied || isPastDeadline) && (
+          <Text style={styles.appliedText}>
+            {hasApplied
+              ? 'You have already applied for this scholarship.'
+              : 'The application deadline has passed. Can not Apply now.'}
+          </Text>
+        )}
+      </View>
     </ScrollView>
   );
 };
@@ -55,12 +78,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    color: colors.blue,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginVertical: 10,
+    marginBottom: 10,
+    color: colors.blue,
   },
   text: {
     fontSize: 16,

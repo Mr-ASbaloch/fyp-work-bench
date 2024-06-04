@@ -16,6 +16,7 @@ import auth from '@react-native-firebase/auth';
 import {ToastAndroid} from 'react-native';
 import BasicInfoButton from '../../components/basicInfo';
 import {useSelector} from 'react-redux';
+import Toast from 'react-native-toast-message'
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const user = useSelector(state => state?.auth?.user);
@@ -72,7 +73,10 @@ const ProfileScreen = () => {
     auth()
       .signOut()
       .then(() =>
-        ToastAndroid.show('Signed out successfully', ToastAndroid.SHORT),
+        Toast.show({
+          type: 'success',
+          text1: 'user Logout Scuuesfully',
+        })
       );
   };
   return (

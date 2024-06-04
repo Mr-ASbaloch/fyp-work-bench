@@ -7,7 +7,7 @@ import {store} from './src/store/store';
 import NavigationScreen from './src/navigation/navigationScreen';
 import {initializeAuth} from './src/store/slices/authSlice';
 import {useDispatch} from 'react-redux';
-
+import Toast from 'react-native-toast-message';
 const Loader = () => (
   <View style={styles.loader}>
     <ActivityIndicator size="large" color="#0000ff" />
@@ -43,6 +43,7 @@ const AppContent = () => {
 const App = () => (
   <Provider store={store}>
     <AppContent />
+    <Toast />
   </Provider>
 );
 

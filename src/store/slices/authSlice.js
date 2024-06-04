@@ -150,6 +150,7 @@
 // export default authSlice.reducer;
 
 
+import Toast from 'react-native-toast-message'
 
 import { createSlice } from '@reduxjs/toolkit';
 import auth from '@react-native-firebase/auth';
@@ -224,10 +225,16 @@ export const editProfile = (profileData) => async dispatch => {
 
       await db().collection('students').doc(userId).update(updatedProfileData);
       dispatch(setUser({ ...updatedProfileData, id: userId }));
-      ToastAndroid.show('Profile updated successfully!', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'success',
+        text1: 'Profile updated successfully!',
+      });
     }
   } catch (error) {
-    ToastAndroid.show('Failed to update profile', ToastAndroid.SHORT);
+    Toast.show({
+      type: 'error',
+      text1: 'Profile update failed!',
+    });
     dispatch(setError(error.message));
   } finally {
     dispatch(setLoading(false));
@@ -240,10 +247,10 @@ export const registerUser =
       dispatch(setLoading(true));
       console.log(displayName, email, password, phoneNumber);
       if (!displayName || !email || !password || !phoneNumber) {
-        ToastAndroid.show(
-          'Please fill your all required fields',
-          ToastAndroid.SHORT,
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Please fill your all required fields',
+        });
         dispatch(setLoading(false));
         return;
       }
@@ -268,16 +275,28 @@ export const registerUser =
             id: auth().currentUser?.uid,
           }),
         );
-        ToastAndroid.show('User registered successfully!', ToastAndroid.SHORT);
+        Toast.show({
+          type: 'success',
+          text1: 'User registered successfully!',
+        });
       } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
-          ToastAndroid.show('This email is already in use', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'error',
+            text1: 'This email is already in use',
+          });
         }
         if (error.code === 'auth/invalid-email') {
-          ToastAndroid.show('This email is invalid', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'error',
+            text1: 'This email is invalid',
+          });
         }
         if (error.code === 'auth/weak-password') {
-          ToastAndroid.show('Password is too weak', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'success',
+            text1: 'Password is too weak',
+          });
         }
         console.log('Error', error.message);
         dispatch(setError(error.message));
@@ -292,10 +311,10 @@ export const loginUser =
       dispatch(setLoading(true));
       try {
         if (!email || !password) {
-          ToastAndroid.show(
-            'Please enter your email and password correctly',
-            ToastAndroid.SHORT,
-          );
+          Toast.show({
+            type: 'error',
+            text1: 'Please enter your email and password correctly',
+          });
           dispatch(setLoading(false));
           return;
         }
@@ -309,19 +328,34 @@ export const loginUser =
           if (userDoc.exists) {
             dispatch(setUser(userDoc.data()));
           }
-          ToastAndroid.show('User logged in!', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'success',
+            text1: 'User logged in successfully',
+          });
         }
       } catch (error) {
         if (error.code === 'auth/user-not-found') {
-          ToastAndroid.show('User not found', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'error',
+            text1: 'User not found',
+          });
         }
         if (error.code === 'auth/wrong-password') {
-          ToastAndroid.show('Invalid password', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'error',
+            text1: 'Invalid password',
+          });
         }
         if (error.code === 'auth/invalid-email') {
-          ToastAndroid.show('Invalid email', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'error',
+            text1: 'Invalid email',
+          });
         }
-        ToastAndroid.show('Login failed', ToastAndroid.SHORT);
+        Toast.show({
+          type: 'error',
+          text1: 'Login Failed',
+        });
         dispatch(setError(error.message));
       } finally {
         dispatch(setLoading(false));

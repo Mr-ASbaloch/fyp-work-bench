@@ -62,7 +62,6 @@ const EditProfile = () => {
         setModalVisible(false);
       });
   };
-
   const handleSubmit = () => {
     // Validation logic goes here
     if (displayName.trim() === '') {
@@ -70,7 +69,7 @@ const EditProfile = () => {
       return;
     }
     // Add more validation logic for other fields as needed
-
+  
     const profileData = {
       displayName,
       gender,
@@ -82,11 +81,21 @@ const EditProfile = () => {
       dob: date.toISOString(),
       profileImage,
     };
-    setLoading(true);
-    dispatch(editProfile(profileData));
-    setLoading(false);
-    console.log('Form submitted!');
+  
+    setLoading(true); // Set loading to true before starting the action
+  
+    // Dispatch the action
+    dispatch(editProfile(profileData))
+      .then(() => {
+        setLoading(false); // Set loading to false after the action is complete
+        console.log('Form submitted!');
+      })
+      .catch(error => {
+        setLoading(false); // Set loading to false if there's an error
+        console.error('Error submitting form:', error);
+      });
   };
+  
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -184,7 +193,7 @@ const EditProfile = () => {
             onChangeText={setDegreeTitle}
           />
 
-          <Button text="Update Profile" onPress={handleSubmit} />
+          <Button text={loading ? "updating" : "Update Profile" } onPress={handleSubmit} />
         </View>
       </ScrollView>
 

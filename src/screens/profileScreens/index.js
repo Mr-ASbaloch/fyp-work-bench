@@ -89,7 +89,7 @@ const ProfileScreen = () => {
       >
         <>
           {profileImage ? (
-            <Image source={{uri: profileImage}} style={styles.coverImage} />
+            <Image source={{uri: `${profileImage}?${new Date().getTime()}`}} style={styles.coverImage} />
           ) : (
             <Image
               source={require('../../assets/images/profile.jpg')}
@@ -139,7 +139,8 @@ const ProfileScreen = () => {
           }}>
           <>
             {profileImage ? (
-              <Image source={{uri: profileImage}} style={styles.profileImage} />
+              // <Image source={{uri: profileImage}} style={styles.profileImage} />
+              <Image source={{uri: `${profileImage}?${new Date().getTime()}`}} style={styles.profileImage} />
             ) : (
               <Image
                 source={require('../../assets/images/profile.jpg')}

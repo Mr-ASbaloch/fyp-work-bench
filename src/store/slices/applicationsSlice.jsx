@@ -41,12 +41,14 @@ export const fetchYourApplications = createAsyncThunk(
         id: doc.id,
         ...doc.data(),
       }));
+      console.log('Fetched Applications:', applications);
       return applications;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   },
 );
+
 
 const applicationsSlice = createSlice({
   name: 'applications',
